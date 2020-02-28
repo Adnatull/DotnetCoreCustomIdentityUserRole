@@ -8,6 +8,7 @@ using Identity.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Identity.Controllers
 {
@@ -16,12 +17,14 @@ namespace Identity.Controllers
         private DataContext _context;
         private SignInManager<AppUser> _signInManager;
         private UserManager<AppUser> _userManager;
+        private ILogger<HomeController> _logger;
 
-        public UserController(DataContext Context, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public UserController(DataContext Context, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ILogger<HomeController> logger)
         {
             _context = Context;
             _signInManager = signInManager;
             _userManager = userManager;
+            _logger = logger;
         }
         public IActionResult Index()
         {
@@ -57,6 +60,7 @@ namespace Identity.Controllers
             if(!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Registration failed");
+                _logger.LogInformation("Register Failed");
                 return View(registerViewModel);
             }
 
@@ -64,6 +68,7 @@ namespace Identity.Controllers
             if(!subscriberRole.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Role assignment failed! Contact with authority");
+                _logger.LogInformation("Role assignment failed! Contact with authority");
                 return View(registerViewModel);
             }
 
@@ -95,14 +100,15 @@ namespace Identity.Controllers
             }
 
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            _logger.LogInformation("Invalid login attempt.");
             return View(loginViewModel);
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult LogOut(string returnUrl = null)
+        public async Task<IActionResult> LogOut(string returnUrl = null)
         {
-            _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
             if (returnUrl != null)
             {
                 return LocalRedirect(returnUrl);
@@ -111,6 +117,23 @@ namespace Identity.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User));
+            UserViewModel userViewModel = new UserViewModel
+            {
+                FirstName   = user.FirstName,
+                LastName    = user.LastName,
+                Username    = user.UserName,
+                Email       = user.Email,
+                Roles       = roles
+            };
+            return View(userViewModel);
         }
 
 
