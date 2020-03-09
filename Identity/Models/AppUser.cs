@@ -11,5 +11,6 @@ namespace Identity.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public virtual ICollection<AppRole> UserRoles { get; set; }
+        public bool? IsEnabled { get; set; }
     }
 }
