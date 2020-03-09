@@ -1,35 +1,38 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Identity.UserManager
 
-@inject SignInManager<AppUser> SignInManager
+@inject AuthSignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 
-    <ul class="navbar-nav">
-        @if (SignInManager.IsSignedIn(User))
-        {     
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
 
-            <li class="nav-item">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <li class="nav-item">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     @UserManager.GetUserName(User)
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 
-                        <a class="dropdown-item" asp-controller="User" asp-action="Profile">Profile</a>
-                        <a class="dropdown-item" onclick="event.preventDefault();document.getElementById('logoutForm').submit();" style="cursor: pointer;">Logout</a>
-                        <form id="logoutForm" class="form-inline" asp-controller="User" asp-action="Logout" method="POST">
-                        </form>
-                    </div>
+                    <a class="dropdown-item" asp-controller="User" asp-action="Profile">Profile</a>
+                    <a class="dropdown-item" onclick="event.preventDefault();document.getElementById('logoutForm').submit();" style="cursor: pointer;">Logout</a>
+                    <form id="logoutForm" class="form-inline" asp-controller="User" asp-action="Logout" method="POST">
+                    </form>
                 </div>
-            </li>           
+            </div>
+        </li>
 
-        }
-        else
-        {
-            <li class="nav-item">
-                <a class="nav-link text-dark" id="register" asp-controller="User" asp-action="Register">Register</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark" id="login" asp-controller="User" asp-action="Login">Login</a>
-            </li>
-        }
-    </ul>
+
+
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="register" asp-controller="User" asp-action="Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-controller="User" asp-action="Login">Login</a>
+        </li>
+    }
+</ul>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Identity.Data;
 using Identity.Models;
+using Identity.UserManager;
 using Identity.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,12 +15,12 @@ namespace Identity.Controllers
 {
     public class UserController : Controller
     {
-        private DataContext _context;
-        private SignInManager<AppUser> _signInManager;
-        private UserManager<AppUser> _userManager;
-        private ILogger<HomeController> _logger;
+        private readonly DataContext _context;
+        private readonly AuthSignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly ILogger<HomeController> _logger;
 
-        public UserController(DataContext Context, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ILogger<HomeController> logger)
+        public UserController(DataContext Context, AuthSignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ILogger<HomeController> logger)
         {
             _context = Context;
             _signInManager = signInManager;
